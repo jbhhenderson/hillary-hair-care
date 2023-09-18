@@ -1,6 +1,7 @@
-import { Table } from "reactstrap"
+import { Spinner, Table } from "reactstrap"
 import { getCustomers } from "../../data/customersData"
 import { useEffect, useState } from "react"
+import CustomerModal from "./CustomerModal"
 
 export default function CustomerList () {
     const [customers, setCustomers] = useState([])
@@ -18,6 +19,11 @@ export default function CustomerList () {
     //     deactivatePatron(patronId)
     //         .then(getAllPatrons())
     // }
+
+    if(customers.length === 0)
+    {
+        return <Spinner />
+    }
 
     return (<div className="container">
     <div className="sub-menu bg-light">
@@ -39,5 +45,6 @@ export default function CustomerList () {
         ))}
       </tbody>
     </Table>
+    <CustomerModal getAllCustomers = {getAllCustomers} />
   </div>)
 }

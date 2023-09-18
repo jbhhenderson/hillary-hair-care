@@ -44,5 +44,12 @@ app.MapGet("/api/stylists", (HillaryHairCareDbContext db) =>
     return db.Stylists.ToList();
 });
 
+app.MapPost("/api/customers/add", (HillaryHairCareDbContext db, Customer newCustomer) => 
+{
+    db.Customers.Add(newCustomer);
+    db.SaveChanges();
+    return Results.Created($"/api/customers/{newCustomer.Id}", newCustomer);
+});
+
 app.Run();
 
