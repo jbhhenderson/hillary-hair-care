@@ -36,7 +36,7 @@ app.UseHttpsRedirection();
 
 app.MapGet("/api/customers", (HillaryHairCareDbContext db) => 
 {
-    return db.Customers.ToList();
+    return db.Customers.OrderBy(c => c.Id).ToList();
 });
 
 app.MapPost("/api/customers/add", (HillaryHairCareDbContext db, Customer newCustomer) => 
@@ -48,7 +48,7 @@ app.MapPost("/api/customers/add", (HillaryHairCareDbContext db, Customer newCust
 
 app.MapGet("/api/stylists", (HillaryHairCareDbContext db) => 
 {
-    return db.Stylists.ToList();
+    return db.Stylists.OrderBy(s => s.Id).ToList();
 });
 
 app.MapPost("/api/stylists/add", (HillaryHairCareDbContext db, Stylist newStylist) => 
@@ -56,6 +56,14 @@ app.MapPost("/api/stylists/add", (HillaryHairCareDbContext db, Stylist newStylis
     db.Stylists.Add(newStylist);
     db.SaveChanges();
     return Results.Created($"/api/customers/{newStylist.Id}", newStylist);
+});
+
+app.MapPut("/api/stylists/change-employment-status/{stylistId}", (HillaryHairCareDbContext db, int stylistId) =>
+{
+    Stylist foundStylist =  db.Stylists.SingleOrDefault(s => s.Id == stylistId);
+    foundStylist.IsEmployee = !foundStylist.IsEmployee;
+    db.SaveChanges();
+    return Results.NoContent();
 });
 
 app.Run();

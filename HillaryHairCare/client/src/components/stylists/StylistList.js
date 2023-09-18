@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { getStylists } from "../../data/stylistsData"
+import { changeStylistEmployment, getStylists } from "../../data/stylistsData"
 import { Spinner, Table } from "reactstrap"
 import StylistModal from "./StylistModal"
 
@@ -19,6 +19,12 @@ export default function StylistList () {
     //     deactivatePatron(patronId)
     //         .then(getAllPatrons())
     // }
+
+    const handleChangeEmployment = (e, stylistId) => {
+        e.preventDefault();
+        changeStylistEmployment(stylistId)
+            .then(() => getAllStylists())
+    };
     if(stylists.length === 0)
     {
         return <Spinner />
@@ -34,6 +40,7 @@ export default function StylistList () {
           <th>Id</th>
           <th>Name</th>
           <th>Employment Status</th>
+          <th>Hire/Fire Employee</th>
         </tr>
       </thead>
       <tbody>
@@ -42,6 +49,11 @@ export default function StylistList () {
             <th scope="row">{s.id}</th>
             <td>{s.name}</td>
             <td>{s.isEmployee ? "Employee" : "Not Employee"}</td>
+            <td>
+                <button onClick={(e) => handleChangeEmployment(e, s.id)}>
+                    {s.isEmployee ? "Fire" : "Hire"}
+                </button>
+            </td>
           </tr>
         ))}
       </tbody>

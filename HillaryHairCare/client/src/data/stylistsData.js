@@ -11,3 +11,9 @@ export const addStylist = async (stylist) => {
         body: JSON.stringify(stylist),
     }).then((res) => res.json());
 };
+
+export const changeStylistEmployment = async (stylistId) => {
+    return await fetch(`${_apiUrl}/change-employment-status/${stylistId}`, {
+        method: "PUT"
+    });
+};
