@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { getStylists } from "../../data/stylistsData"
-import { Table } from "reactstrap"
+import { Spinner, Table } from "reactstrap"
+import StylistModal from "./StylistModal"
 
 export default function StylistList () {
     const [stylists, setStylists] = useState([])
@@ -18,6 +19,10 @@ export default function StylistList () {
     //     deactivatePatron(patronId)
     //         .then(getAllPatrons())
     // }
+    if(stylists.length === 0)
+    {
+        return <Spinner />
+    }
 
     return (<div className="container">
     <div className="sub-menu bg-light">
@@ -28,6 +33,7 @@ export default function StylistList () {
         <tr>
           <th>Id</th>
           <th>Name</th>
+          <th>Employment Status</th>
         </tr>
       </thead>
       <tbody>
@@ -35,9 +41,11 @@ export default function StylistList () {
           <tr key={`stylists-${s.id}`}>
             <th scope="row">{s.id}</th>
             <td>{s.name}</td>
+            <td>{s.isEmployee ? "Employee" : "Not Employee"}</td>
           </tr>
         ))}
       </tbody>
     </Table>
+    <StylistModal getAllStylists = {getAllStylists} />
   </div>)
 }
