@@ -6,12 +6,14 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import CustomerList from './components/customers/CustomerList';
 import StylistList from './components/stylists/StylistList';
+import AppointmentList from './components/appointments/AppointmentList';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />}>
+        <Route index element={<AppointmentList />} />
         <Route path="customers">
           <Route index element={<CustomerList />} />
           {/* <Route path=":id" element={<MaterialDetails />} />
@@ -19,6 +21,9 @@ root.render(
         </Route>
         <Route path='stylists'>
           <Route index element={<StylistList />} />
+        </Route>
+        <Route path='appointments'>
+          <Route index element={<AppointmentList />} />
         </Route>
       </Route>
     </Routes>
