@@ -11,3 +11,9 @@ export const addCustomer = async (customer) => {
         body: JSON.stringify(customer),
     }).then((res) => res.json());
 };
+
+export const removeCustomer = async (customerId) => {
+    return await fetch(`${_apiUrl}/remove/${customerId}`, {
+        method: "DELETE"
+    })
+};
