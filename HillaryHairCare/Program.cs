@@ -47,6 +47,14 @@ app.MapPost("/api/customers/add", (HillaryHairCareDbContext db, Customer newCust
     return Results.Created($"/api/customers/{newCustomer.Id}", newCustomer);
 });
 
+app.MapDelete("/api/customers/remove/{customerId}", (HillaryHairCareDbContext db, int customerId) =>
+{
+    Customer foundCustomer = db.Customers.SingleOrDefault(c => c.Id == customerId);
+    db.Customers.Remove(foundCustomer);
+    db.SaveChanges();
+    return Results.NoContent();
+});
+
 app.MapGet("/api/stylists", (HillaryHairCareDbContext db) => 
 {
     return db.Stylists.OrderBy(s => s.Id).ToList();

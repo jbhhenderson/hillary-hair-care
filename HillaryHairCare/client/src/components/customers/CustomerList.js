@@ -1,5 +1,5 @@
 import { Spinner, Table } from "reactstrap"
-import { getCustomers } from "../../data/customersData"
+import { getCustomers, removeCustomer } from "../../data/customersData"
 import { useEffect, useState } from "react"
 import CustomerModal from "./CustomerModal"
 
@@ -14,11 +14,11 @@ export default function CustomerList () {
         getAllCustomers()
     }, [])
 
-    // const handleDeactivateButton = (e, patronId) => {
-    //     e.preventDefault();
-    //     deactivatePatron(patronId)
-    //         .then(getAllPatrons())
-    // }
+    const handleRemoveButton = (e, customerId) => {
+        e.preventDefault();
+        removeCustomer(customerId)
+            .then(() => getAllCustomers())
+    }
 
     if(customers.length === 0)
     {
@@ -41,6 +41,9 @@ export default function CustomerList () {
           <tr key={`customers-${c.id}`}>
             <th scope="row">{c.id}</th>
             <td>{c.name}</td>
+            <td>
+                <button onClick={(e) => handleRemoveButton(e, c.id)}>Remove</button>
+            </td>
           </tr>
         ))}
       </tbody>
