@@ -45,5 +45,13 @@ public class HillaryHairCareDbContext : DbContext
                 new Appointment {Id = 1, StylistId = 1, CustomerId = 3},
                 new Appointment {Id = 2, StylistId = 2, CustomerId = 1}
             });
+
+            modelBuilder.Entity("AppointmentService").HasData(new object[]
+            {
+                new {AppointmentsId = 1, ServicesId = 1},
+                new {AppointmentsId = 1, ServicesId = 2},
+                new {AppointmentsId = 2, ServicesId = 2},
+                new {AppointmentsId = 2, ServicesId = 3},
+            });
         }
 }
