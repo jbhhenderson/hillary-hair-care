@@ -2,6 +2,7 @@ using HillaryHairCare.Models;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -65,6 +66,16 @@ app.MapPut("/api/stylists/change-employment-status/{stylistId}", (HillaryHairCar
     db.SaveChanges();
     return Results.NoContent();
 });
+
+app.MapGet("/api/appointments", (HillaryHairCareDbContext db) => 
+{
+    return db.Appointments
+    .Include(a => a.Customer)
+    .Include(a => a.Stylist)
+    .Include(a => a.Services)
+    .OrderBy(a => a.Time)
+    .ToList();
+}); 
 
 app.Run();
 
