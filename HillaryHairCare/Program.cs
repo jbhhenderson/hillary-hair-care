@@ -94,11 +94,11 @@ app.MapGet("/api/appointments/{appointmentId}", (HillaryHairCareDbContext db, in
     .SingleOrDefault(a => a.Id == appointmentId);
 }); 
 
-app.MapPut("/api/appointments/update/{appointmentId}", (HillaryHairCareDbContext db, Appointment newAppointment, int appointmentId) => 
+app.MapPut("/api/appointments/update/{appointmentId}", (HillaryHairCareDbContext db, Appointment updatedAppointment, int appointmentId) => 
 {
     Appointment foundAppointment = db.Appointments.Include(a => a.Services).SingleOrDefault(a => a.Id == appointmentId);
 
-    List<int> serviceIds = newAppointment.Services.Select(s => s.Id).ToList();
+    List<int> serviceIds = updatedAppointment.Services.Select(s => s.Id).ToList();
 
     List<Service> foundServices = db.Services.Where(s => serviceIds.Contains(s.Id)).ToList();
 
@@ -106,14 +106,41 @@ app.MapPut("/api/appointments/update/{appointmentId}", (HillaryHairCareDbContext
 
     foundAppointment.Services = foundServices;
 
-    foundAppointment.Time = newAppointment.Time;
+    foundAppointment.Time = updatedAppointment.Time;
 
-    foundAppointment.StylistId = newAppointment.StylistId;
+    foundAppointment.StylistId = updatedAppointment.StylistId;
 
     db.SaveChanges();
 
     return Results.NoContent();
 
+});
+
+app.MapPost("/api/appointments/add", (HillaryHairCareDbContext db, Appointment newAppointment) => 
+{
+    List<int> serviceIds = newAppointment.Services.Select(s => s.Id).ToList();
+
+    List<Service> foundServices = db.Services.Where(s => serviceIds.Contains(s.Id)).ToList();
+
+    newAppointment.Services.Clear();
+
+    newAppointment.Services = foundServices;
+
+    db.Appointments.Add(newAppointment);
+    db.SaveChanges();
+
+    return Results.Ok();
+});
+
+app.MapDelete("/api/appointments/{appointmentId}", (HillaryHairCareDbContext db, int appointmentId) => 
+{
+    Appointment foundAppointment = db.Appointments.SingleOrDefault(a => a.Id == appointmentId);
+
+    db.Appointments.Remove(foundAppointment);
+
+    db.SaveChanges();
+
+    return Results.NoContent();
 });
 
 app.MapGet("/api/services", (HillaryHairCareDbContext db) => 

@@ -1,45 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"
-import { cancelAppointment, getAppointment, updateAppointment } from "../../data/appointmentsData";
+import { addAppointment, updateAppointment } from "../../data/appointmentsData";
 import { FormGroup, Input, Label } from "reactstrap";
 import { getStylists } from "../../data/stylistsData";
 import { getServices } from "../../data/servicesData";
+import { getCustomers } from "../../data/customersData";
 import { useNavigate } from "react-router-dom";
 
-export default function AppointmentDetails () {
-    const [appointment, setAppointment] = useState({})
+export default function CreateAppointment () {
     const [stylists, setStylists] = useState([])
     const [services, setServices] = useState([])
+    const [customers, setCustomers] = useState([])
     const [selectedServices, setSelectedServices] = useState([])
     const [selectedDate, setSelectedDate] = useState("")
     const [selectedTime, setSelectedTime] = useState("")
     const [selectedStylist, setSelectedStylist] = useState(0)
-    const { appointmentId } = useParams()
+    const [selectedCustomer, setSelectedCustomer] = useState(0)
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        getThisAppointment()
         getStylists()
           .then(setStylists)
         getServices()
           .then(setServices)
+        getCustomers()
+          .then(setCustomers)
     }, [])
 
-    useEffect(() => {
-      setSelectedServices(appointment.services)
-    }, [appointment])
+    const dollars = () => {
+      let totalPrice = 0;
 
-    const getThisAppointment = () => {
-      getAppointment(parseInt(appointmentId))
-        .then(setAppointment)
-    }
-
-    const dollars = (price) => {
+      for (const service of selectedServices) {
+        totalPrice += service?.price
+      }
+        
       return new Intl.NumberFormat(`en-US`, {
       currency: `USD`,
       style: 'currency',
-    }).format(price)};
+    }).format(totalPrice)};
 
     const handleCheckboxChange = (e, service) => {
       const { checked } = e.target;
@@ -56,38 +54,41 @@ export default function AppointmentDetails () {
     const handleSubmitButton = (e) => {
       e.preventDefault()
 
-      let newAppointment = structuredClone(appointment);
-      newAppointment.services = structuredClone(selectedServices);
-      newAppointment.stylistId = selectedStylist ? selectedStylist : appointment.stylistId
-      newAppointment.time = `${selectedDate ? selectedDate : appointment.time?.split("T")[0]}T${selectedTime ? selectedTime : appointment.time?.split("T")[1]}:00`
+      let newAppointment = {
+        services: structuredClone(selectedServices),
+        customerId: structuredClone(selectedCustomer),
+        stylistId: structuredClone(selectedStylist),
+        time: `${selectedDate}T${selectedTime}:00`
+      }
 
-      updateAppointment(newAppointment.id, newAppointment)
-      .then(getThisAppointment)
+      addAppointment(newAppointment)
+      .then(() => navigate("/"))
     };
-
-    const handleDeleteButton = (e) => {
-      e.preventDefault()
-
-      cancelAppointment(appointment.id)
-        .then(() => navigate("/"))
-    }
 
     return (
     <div className="container">
-      <h2>{appointment.customer?.name}</h2>
-      <p>Current Appointment Date</p>
-      <Input type="date" value={appointment.time?.split("T")[0]}></Input>
-      <p></p>
+      <FormGroup>
+        <Label for="exampleSelect">
+          Select Customer
+        </Label>
+        <Input
+          id="exampleSelect"
+          name="select"
+          type="select"
+          onChange={(e) => setSelectedCustomer(parseInt(e.target.value))}
+        >
+          <option>-Choose A Customer-</option>
+          {customers.map((c) => {
+            return <option value={c.id}>{c.name}</option>
+          })}
+        </Input>
+      </FormGroup>
       <p>New Appointment Date</p>
       <Input type="date" onChange={(e) => setSelectedDate(e.target.value)}></Input>
-      <p></p>
-      <p>Current Appointment Time</p>
-      <Input type="time" value={appointment.time?.split("T")[1]}></Input>
       <p></p>
       <p>New Appointment Time</p>
       <Input type="time" onChange={(e) => setSelectedTime(e.target.value)}></Input>
       <p></p>
-      <p>Current Stylist: {appointment.stylist?.name}</p>
       <FormGroup>
         <Label for="exampleSelect">
           Select Stylist
@@ -104,8 +105,7 @@ export default function AppointmentDetails () {
           })}
         </Input>
       </FormGroup>
-      {selectedServices?.length ?
-        services.map(s => (
+      {services.map(s => (
           <React.Fragment key={s.id}>
             <label>
               {s.name}
@@ -118,11 +118,9 @@ export default function AppointmentDetails () {
             ></input>
           </React.Fragment>
         ))
-        :<></>
       }
-      <p>Total Price: {dollars(appointment.totalPrice)}</p>
+      <p>Total Price: {dollars()}</p>
       <button onClick={handleSubmitButton}>Submit</button>
-      <button onClick={handleDeleteButton}>Cancel Appointment</button>
     </div>
   );
 }

@@ -15,3 +15,17 @@ export const updateAppointment = async (appointmentId, appointmentObj) => {
     body: JSON.stringify(appointmentObj)  
 })
 };
+
+export const addAppointment = async (appointment) => {
+    return await fetch(`${_apiUrl}/add`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(appointment),
+    });
+};
+
+export const cancelAppointment = async (appointmentId) => {
+    return await fetch(`${_apiUrl}/${appointmentId}`, {
+        method: "DELETE",
+    })
+}
