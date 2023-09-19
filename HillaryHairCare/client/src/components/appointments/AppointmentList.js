@@ -20,12 +20,6 @@ export default function AppointmentList () {
         style: 'currency',
     }).format(price)};
 
-    // const handleDeactivateButton = (e, patronId) => {
-    //     e.preventDefault();
-    //     deactivatePatron(patronId)
-    //         .then(getAllPatrons())
-    // }
-
     if(appointments.length === 0)
     {
         return <Spinner />
@@ -35,6 +29,9 @@ export default function AppointmentList () {
     <div className="sub-menu bg-light">
       <h4>Appointments</h4>
     </div>
+    <Link to={"/appointments/add"}>
+      <button>New Appointment</button>
+    </Link>
     <Table>
       <thead>
         <tr>
