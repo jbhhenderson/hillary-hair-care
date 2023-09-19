@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { getAppointments } from "../../data/appointmentsData"
 import { Spinner, Table } from "reactstrap"
+import { Link } from "react-router-dom"
 
 export default function AppointmentList () {
     const [appointments, setAppointments] = useState([])
@@ -55,7 +56,9 @@ export default function AppointmentList () {
             <td>{a.time?.split("T")[0]}</td>
             <td>{a.time?.slice(11,16)}</td>
             <td>{dollars(a.totalPrice)}</td>
-            <td>Details link goes here</td>
+            <td>
+              <Link to={`/appointments/${a.id}`}>Details</Link>
+            </td>
           </tr>
         ))}
       </tbody>

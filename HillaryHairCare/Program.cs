@@ -83,7 +83,43 @@ app.MapGet("/api/appointments", (HillaryHairCareDbContext db) =>
     .Include(a => a.Services)
     .OrderBy(a => a.Time)
     .ToList();
+});
+
+app.MapGet("/api/appointments/{appointmentId}", (HillaryHairCareDbContext db, int appointmentId) => 
+{
+     return db.Appointments
+    .Include(a => a.Customer)
+    .Include(a => a.Stylist)
+    .Include(a => a.Services)
+    .SingleOrDefault(a => a.Id == appointmentId);
 }); 
+
+app.MapPut("/api/appointments/update/{appointmentId}", (HillaryHairCareDbContext db, Appointment newAppointment, int appointmentId) => 
+{
+    Appointment foundAppointment = db.Appointments.Include(a => a.Services).SingleOrDefault(a => a.Id == appointmentId);
+
+    List<int> serviceIds = newAppointment.Services.Select(s => s.Id).ToList();
+
+    List<Service> foundServices = db.Services.Where(s => serviceIds.Contains(s.Id)).ToList();
+
+    foundAppointment.Services.Clear();
+
+    foundAppointment.Services = foundServices;
+
+    foundAppointment.Time = newAppointment.Time;
+
+    foundAppointment.StylistId = newAppointment.StylistId;
+
+    db.SaveChanges();
+
+    return Results.NoContent();
+
+});
+
+app.MapGet("/api/services", (HillaryHairCareDbContext db) => 
+{
+    return db.Services.OrderBy(s => s.Id).ToList();
+});
 
 app.Run();
 
